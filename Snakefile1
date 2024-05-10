@@ -1,0 +1,96 @@
+SAMPLES = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"]
+
+rule all:
+     input:
+        expand("merged2/quadr738_chain180424_merged2_sorted_{number}fi.bed",number = SAMPLES),
+        expand("comp{number2}hg19_gene.fasta.fai", number2 = SAMPLES),
+        expand("comphg19{number3}_gene_GCmerged.fasta",number3 = SAMPLES),
+        expand("../punkt1/merged/quadr7_chain180424_merged2_sorted_{number3}.bed",number3 = SAMPLES),
+        expand("meanquadrhg19{number3}.txt",number3 = SAMPLES),
+        expand("results_hg19_percents_{number3}.txt",number3 = SAMPLES),
+        expand("gccoords_percents_{number3}.txt",number3 = SAMPLES),
+        expand("densitiesGSM40_percent.txt")
+                                                                                        
+
+rule filter:
+    input:
+      "../punkt1/merged/quadr738_chain180424_merged2_sorted_{number}.bed" 
+    output: 
+      "merged2/quadr738_chain180424_merged2_sorted_{number}fi.bed"
+    shell:
+      "python filter.py {input} {output} {wildcards.number}"
+rule bedtools:
+    input:
+      "comp{number2}hg19_gene.bed"
+    output:
+      "comp{number2}hg19_gene.fasta"
+    shell:
+       "bash script6.sh {input} {output}"
+rule script3:
+    input:
+      rules.bedtools.output
+    output:
+      "comp{number2}hg19_gene.fasta.fai"
+    shell:
+       "bash script3.sh {input} {output}"
+rule script4:
+    input:
+       "../punkt1/GSM/GSM_hg196_un_{number3}.bed",
+       "../punkt1/merged/quadr7_chain180424_merged2_sorted_{number3}.bed"
+    output:
+       "comphg19{number3}_gene_GCmerged.fasta",
+    shell:
+       """
+       bash script4.sh {input} {output}
+       """
+
+rule mean: 
+    input:
+      "../punkt1/merged/quadr7_chain180424_merged2_sorted_{number4}.bed"
+    output:
+      "meanquadrhg19{number4}.txt"
+    shell:
+      """
+      python mean.py {input} {output}
+      """
+
+rule cat:
+     input:
+       x1 = expand("meanquadrhg19{number3}.txt", number3 = SAMPLES),
+       x2 = "comphg19{number3}_gene_GCmerged.fasta"
+     output:
+       "results_hg19_percents_{number3}.txt"
+     shell:
+       """
+       cat {input.x1} > meanquadrhg19.txt
+       python windowrun13.py meanquadrhg19.txt {input.x2}  {output} {wildcards.number3}
+       """ 
+
+rule coordsgc:
+     input:
+        rules.cat.output
+     output:
+        "gccoords_percents_{number3}.txt"
+     shell:
+        """
+        python coordsgc13.py {input} {output}
+        """
+
+rule script2:
+     input:
+        "../punkt1/merged/quadr7_chain180424_merged2_sorted_{number3}.bed",
+        rules.coordsgc.output
+     output:
+        "densitiesGSM40_percent{number3}.txt"
+     shell:
+         """
+         python script2.py {input} {wildcards.number3} {output}
+         """
+rule cat2:
+     input:
+        expand("densitiesGSM40_percent{number3}.txt",number3 = SAMPLES)
+     output:
+        "densitiesGSM40_percent.txt"
+     shell:
+        "cat {input} > {output}"
+
