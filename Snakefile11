@@ -1,0 +1,73 @@
+SAMPLES = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"]
+
+rule all:
+     input:
+        expand("comp/comphg19{number}_gene_GCmerged_subtract_from_all_39_loop7_intergene.bed",number = SAMPLES),
+        expand("../punkt1/merged/quadr7_chain180424_merged2_sorted_{number}.bed",number = SAMPLES),
+        expand("meanquadr/meanquadrhg19_{number}_my_39_subtract_from_all_loop7_intergene.txt", number = SAMPLES),
+        expand("results/results_hg19_percents_{number}_my_39_subtract_from_all_loop7_intergene.txt",number = SAMPLES),
+        expand("gccoords/gccoords_percents_{number}_my_39_subtract_from_all_filtered_without_quadr_and_CG_loop7_intergene.txt", number = SAMPLES),
+        "densities/densitiesGSM39_percent-2508_subtract_from_all_loop7_filtered_intergene.txt"
+
+                                                                                       
+rule script4:
+    input:
+       "../punkt1/control/bed_intergene/control_set_{number}_39_my_intergene.bed",
+       "../punkt1/merged/quadr7_chain180424_merged2_sorted_{number}.bed"
+    output:
+       "comp/comphg19{number}_gene_GCmerged_subtract_from_all_39_loop7_intergene.bed",
+    shell:
+       """
+       bash scripts/script4.sh {input} {output}
+       """
+rule mean: 
+    input:
+      "../punkt1/merged/quadr7_chain180424_merged2_sorted_{number}.bed"
+    output:
+      "meanquadr/meanquadrhg19_{number}_my_39_subtract_from_all_loop7_intergene.txt"
+    shell:
+      """
+      python scripts/mean.py {input} {output}
+      """
+
+rule cat:
+     input:
+       x1 = expand("meanquadr/meanquadrhg19_{number}_my_39_subtract_from_all_loop7_intergene.txt", number = SAMPLES),
+       x2 = "comp/comphg19{number}_gene_GCmerged_subtract_from_all_39_loop7_intergene.bed",
+     output:
+       "results/results_hg19_percents_{number}_my_39_subtract_from_all_loop7_intergene.txt"
+     shell:
+       """
+       cat {input.x1} > meanquadr/meanquadrhg19_my_39_subtract_from_all_loop7_intergene.txt
+       python scripts/windowrun13.py meanquadr/meanquadrhg19_my_39_subtract_from_all_loop7_intergene.txt {input.x2}  {output} {wildcards.number}
+       """ 
+
+
+rule coordsgc:
+     input:
+        rules.cat.output
+     output:
+        "gccoords/gccoords_percents_{number}_my_39_subtract_from_all_filtered_without_quadr_and_CG_loop7_intergene.txt"
+     shell:
+        """
+        python scripts/coordsgc13.py {input} {output}
+        """
+
+rule script2:
+     input:
+        "../punkt1/merged/quadr7_chain180424_merged2_sorted_{number}.bed",
+        rules.coordsgc.output
+     output:
+        "densities/densitiesGSM39_percent{number}-2508_subtract_from_all_loop7_filtered_intergene.txt"
+     shell:
+         """
+         python scripts/script2_39_all_intergene.py {input} {wildcards.number} {output}
+         """
+rule cat2:
+     input:
+        expand("densities/densitiesGSM39_percent{number}-2508_subtract_from_all_loop7_filtered_intergene.txt",number = SAMPLES)
+     output:
+        "densities/densitiesGSM39_percent-2508_subtract_from_all_loop7_filtered_intergene.txt"
+     shell:
+        "cat {input} > {output}"
+
