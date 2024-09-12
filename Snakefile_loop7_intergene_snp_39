@@ -6,8 +6,8 @@ rule all:
         expand("../punkt1/merged/quadr7_chain180424_merged2_sorted_{number}.bed",number = SAMPLES),
         expand("meanquadr/meanquadrhg19_{number}_my_39_subtract_from_all_loop7_intergene.txt", number = SAMPLES),
         expand("results/results_hg19_percents_{number}_my_39_subtract_from_all_loop7_intergene.txt",number = SAMPLES),
-        expand("gccoords/gccoords_percents_{number}_my_39_subtract_from_all_filtered_without_quadr_and_CG_loop7_intergene.txt", number = SAMPLES),
-        "densities/densitiesGSM39_percent-2508_subtract_from_all_loop7_filtered_intergene.txt"
+        expand("gccoords/control/gccoords_percents_{number}_my_39_subtract_from_all_loop7_intergene.txt",number = SAMPLES),
+        "densities/densitiesGSM39_percent-1109_subtract_from_all_loop7_intergene_snp.txt"
 
                                                                                        
 rule script4:
@@ -27,7 +27,7 @@ rule mean:
       "meanquadr/meanquadrhg19_{number}_my_39_subtract_from_all_loop7_intergene.txt"
     shell:
       """
-      python scripts/mean.py {input} {output}
+      python scripts/mean39_loop7.py {input} {output}
       """
 
 rule cat:
@@ -47,7 +47,7 @@ rule coordsgc:
      input:
         rules.cat.output
      output:
-        "gccoords/gccoords_percents_{number}_my_39_subtract_from_all_filtered_loop7_intergene.txt"
+        "gccoords/control/gccoords_percents_{number}_my_39_subtract_from_all_loop7_intergene.txt"
      shell:
         """
         python scripts/coordsgc13.py {input} {output}
@@ -58,16 +58,16 @@ rule script2:
         "../punkt1/merged/quadr7_chain180424_merged2_sorted_{number}.bed",
         rules.coordsgc.output
      output:
-        "densities/densitiesGSM39_percent{number}-2508_subtract_from_all_loop7_filtered_intergene.txt"
+        "densities/densitiesGSM39_percent{number}-1109_subtract_from_all_loop7_intergene_snp.txt"
      shell:
          """
-         python scripts/script2_39_all_intergene.py {input} {wildcards.number} {output}
+         python scripts/script2_39_all_intergene_without_CG.py {input} {wildcards.number} {output}
          """
 rule cat2:
      input:
-        expand("densities/densitiesGSM39_percent{number}-2508_subtract_from_all_loop7_filtered_intergene.txt",number = SAMPLES)
+        expand("densities/densitiesGSM39_percent{number}-1109_subtract_from_all_loop7_intergene_snp.txt",number = SAMPLES)
      output:
-        "densities/densitiesGSM39_percent-2508_subtract_from_all_loop7_filtered_intergene.txt"
+        "densities/densitiesGSM39_percent-1109_subtract_from_all_loop7_intergene_snp.txt"
      shell:
         "cat {input} > {output}"
 

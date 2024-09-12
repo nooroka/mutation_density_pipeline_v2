@@ -2,21 +2,21 @@ SAMPLES = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16
 
 rule all:
      input:
-        "densities/densitiesGSM40_percent-3107_subtract_from_all_loop5_filtered_without_all_CG.txt"
+        "densities/densitiesGSM39_percent-0108_subtract_from_all_loop7_filtered_without_all_CG.txt"
 rule script2:
      input:
-        "../punkt1/merged/quadr7_chain180424_merged2_sorted_{number3}_40_loop5.bed",
-        "gccoords/filtered/max_all_40_{number3}_gc_filtered_without_quadr_and_CG_loop5.txt"
+        "../punkt1/merged/quadr7_chain180424_merged2_sorted_{number3}.bed",
+        "gccoords/filtered/max_all_39_{number3}_gc_filtered_without_quadr_and_CG_loop7.txt"
      output:
-        "densities/densitiesGSM40_percent{number3}-3107_subtract_from_all_loop5_filtered_without_all_CG.txt"
+        "densities/densitiesGSM39_percent{number3}-0108_subtract_from_all_loop7_filtered_without_all_CG.txt"
      shell:
          """
-         python scripts/script2_40_all.py {input} {wildcards.number3} {output}
+         python scripts/script2_39_all.py {input} {wildcards.number3} {output}
          """
 rule cat2:
      input:
-        expand("densities/densitiesGSM40_percent{number3}-3107_subtract_from_all_loop5_filtered_without_all_CG.txt",number3 = SAMPLES)
+        expand("densities/densitiesGSM39_percent{number3}-0108_subtract_from_all_loop7_filtered_without_all_CG.txt",number3 = SAMPLES)
      output:
-        "densities/densitiesGSM40_percent-3107_subtract_from_all_loop5_filtered_without_all_CG.txt"
+        "densities/densitiesGSM39_percent-0108_subtract_from_all_loop7_filtered_without_all_CG.txt"
      shell:
         "cat {input} > {output}"

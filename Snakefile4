@@ -9,7 +9,7 @@ rule all:
         expand("meanquadr/meanquadrhg19{number3}_my_40_subtract_from_all.txt", number3 = SAMPLES),
         expand("results/results_hg19_percents_{number3}_my_40_subtract_from_all.txt",number3 = SAMPLES),
         expand("gccoords/gccoords_percents_{number3}_my_40_subtract_from_all.txt",number3 = SAMPLES),
-        expand("densities/densitiesGSM40_percent-2206_subtract_from_all.txt")
+        expand("densities/densitiesGSM40_percent-0707_subtract_from_all.txt")
                                                                                         
 
 rule filter:
@@ -35,7 +35,7 @@ rule script3:
        "bash script3.sh {input} {output}"
 rule script4:
     input:
-       "../punkt1/control/control_set_{number3}_40_my.bed",
+       "../punkt1/control/control_set_{number3}_40_my.bed",#убираем огрызки квадруплексов
        "../punkt1/merged/quadr7_chain180424_merged2_sorted_{number3}_40.bed"
     output:
        "comp/comphg19{number3}_gene_GCmerged_subtract_from_all.bed",
@@ -81,16 +81,16 @@ rule script2:
         "../punkt1/merged/quadr7_chain180424_merged2_sorted_{number3}_40.bed",
         rules.coordsgc.output
      output:
-        "densities/densitiesGSM40_percent{number3}-2206_subtract_from_all.txt"
+        "densities/densitiesGSM40_percent{number3}-0707_subtract_from_all.txt"
      shell:
          """
-         python script2.py {input} {wildcards.number3} {output}
+         python script2_40_all.py {input} {wildcards.number3} {output}
          """
 rule cat2:
      input:
-        expand("densities/densitiesGSM40_percent{number3}-2206_subtract_from_all.txt",number3 = SAMPLES)
+        expand("densities/densitiesGSM40_percent{number3}-0707_subtract_from_all.txt",number3 = SAMPLES)
      output:
-        "densities/densitiesGSM40_percent-2206_subtract_from_all.txt"
+        "densities/densitiesGSM40_percent-0707_subtract_from_all.txt"
      shell:
         "cat {input} > {output}"
 
