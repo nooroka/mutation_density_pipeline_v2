@@ -10,6 +10,7 @@ for line in op:
         line = line.strip()
         line = line.split()
         mean1 = int(line[2])-int(line[1])
+        print(line, mean1)
         sum1+=mean1
 d6 = subprocess.check_output('wc -l {}'.format(sys.argv[1]),shell = True)
 d6 = d6.decode().split()[0]

@@ -31,7 +31,7 @@ op.close()
 d5 = subprocess.check_output("wc -l {}".format(sys.argv[2]),shell = True)
 os.system("uniq /data/nooroka/grant/punkt3/stage2/gccoords/def/gccoords_{}2defhg19_39_all_loop7.bed > /data/nooroka/grant/punkt3/stage2/gccoords/def/gccoords_{}_undefhg19_39_all_loop7.bed".format(sys.argv[3],sys.argv[3]))
 os.system("uniq /data/nooroka/grant/punkt3/stage2/resultgene/resultgenehg19{}_39_all_loop7.bed | awk  '!seen[$4]++' > /data/nooroka/grant/punkt3/stage2/resultgene/resultgenehg19{}_un_39_all_loop7.bed".format(sys.argv[3],sys.argv[3])) #мб не надо, проверить схожесть файлов
-os.system("bedtools intersect  -a /data/nooroka/grant/punkt3/bed-37/bed_chr_{}_sorted.bed -b /data/nooroka/grant/punkt3/stage2/gccoords/def/gccoords_{}_undefhg19_39_all_loop7.bed | awk  '!seen[$4]++' > ../intmut/intmuthg19{}_39_all_loop7.bed".format(sys.argv[3],sys.argv[3],sys.argv[3])) 
+os.system("bedtools intersect  -a /data/nooroka/grant/punkt3/bed-37/bed_chr_{}_sorted.bed -b /data/nooroka/grant/punkt3/stage2/gccoords/def/gccoords_{}_undefhg19_39_all_loop7.bed | awk  '!seen[$4]++' >/data/nooroka/grant/punkt3/stage2/intmut/intmuthg19{}_39_all_loop7.bed".format(sys.argv[3],sys.argv[3],sys.argv[3])) 
 d1 = subprocess.check_output('wc -l /data/nooroka/grant/punkt3/stage2/intmut/intmuthg19{}_39_all_loop7.bed'.format(sys.argv[3]),shell = True) #look at the number of mutations #мб не надо, проверить схожесть файлов
 d2 = subprocess.check_output('wc -l /data/nooroka/grant/punkt3/stage2/resultgene/resultgenehg19{}_un_39_all_loop7.bed'.format(sys.argv[3]), shell = True)
 d6 = subprocess.check_output('wc -l {}'.format(sys.argv[1]),shell = True)
